@@ -1,0 +1,9 @@
+# jupyterhub version is defined in chartpress.yaml
+jupyterhub-kubespawner==0.10.1
+kubernetes==8.0.*
+pymysql==0.9.2
+pycurl==7.43.0.*
+statsd==3.2.2
+cryptography==2.3.*
+# Very useful for profiling running hubs
+py-spy
