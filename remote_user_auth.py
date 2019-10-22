@@ -20,6 +20,16 @@ class RemoteUserLoginHandler(BaseHandler):
             self.set_login_cookie(user)
             self.redirect(url_path_join(self.hub.server.base_url, 'home'))
 
+class RemoteUserLogoutHandler(BaseHandler):
+    """Log a user out from JupyterHub by clearing their login cookie
+    and then redirect to shibboleth logout url to clear shibboleth cookie."""
+    def get(self):
+        user = self.get_current_user()
+        if user:
+            self.log.info("User logged out: %s", user.name)
+            self.clear_login_cookie()
+            self.statsd.incr('logout')
+        self.redirect('https://jh.giesbusiness.illinois.edu')
 
 class RemoteUserAuthenticator(Authenticator):
     """
@@ -29,6 +39,11 @@ class RemoteUserAuthenticator(Authenticator):
         default_value='Remote-User',
         config=True,
         help="""HTTP header to inspect for the authenticated username.""")
+
+    shibboleth_logout_url = Unicode(
+        default_value='',
+        config=True,
+        help="""Url to logout from shibboleth SP.""")
 
     def get_handlers(self, app):
         return [
